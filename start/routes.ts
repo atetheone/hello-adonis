@@ -43,10 +43,10 @@ router.get('users/:id', [UsersController, 'show']).use(middleware.auth())
 
 /************************************** POSTS ROUTES */
 router.post('posts', [PostsController, 'store']).use(middleware.auth())
-router.put('posts/:id', [PostsController, 'update']).use(middleware.auth())
+router.put('posts/:postId', [PostsController, 'update']).use(middleware.auth())
 router.get('/posts', [PostsController, 'index']).use(middleware.auth())
 router
-  .get('/posts/:id', [PostsController, 'show'])
+  .get('/posts/:postId', [PostsController, 'show'])
   .where('id', {
     match: /^[0-9]+$/, // match only numbers
     cast: (value) => Number(value), // cast the value to a number
@@ -57,7 +57,7 @@ router.delete('/posts/:postId', [PostsController, 'destroy']).use(middleware.aut
 
 /********************* COMMENTS ROUTES */
 // Get all comments for a post
-router.get('/posts/:postId/comments/', [CommentsController, 'index']).use(middleware.auth())
+router.get('/posts/:postId/comments', [CommentsController, 'index']).use(middleware.auth())
 
 // Get a single comment for a post
 router
@@ -65,24 +65,14 @@ router
   .use(middleware.auth())
 
 // Create a new comment for a post
-router
-  .post('/posts/:postId/comments/', ({ params }) => {
-    console.log(`Post id: ${params.id}`)
-  })
-  .use(middleware.auth())
+router.post('/posts/:postId/comments', [CommentsController, 'store']).use(middleware.auth())
 
 // Update a comment for a post
 router
-  .put('/posts/:postId/comments/:commentId', ({ params }) => {
-    console.log(`Post id: ${params.id}`)
-    console.log(`Comment id: ${params.commentId}`)
-  })
+  .put('/posts/:postId/comments/:commentId', [CommentsController, 'update'])
   .use(middleware.auth())
 
 // Delete a comment for a post
 router
-  .delete('/posts/:postId/comments/:commentId', ({ params }) => {
-    console.log(`Post id: ${params.id}`)
-    console.log(`Comment id: ${params.commentId}`)
-  })
+  .delete('/posts/:postId/comments/:commentId', [CommentsController, 'destroy'])
   .use(middleware.auth())
