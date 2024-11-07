@@ -42,37 +42,37 @@ router.get('users', [UsersController, 'index']).use(middleware.auth()) // retrie
 router.get('users/:id', [UsersController, 'show']).use(middleware.auth())
 
 /************************************** POSTS ROUTES */
-router.post('posts', [PostsController, 'store']).use(middleware.auth())
-router.put('posts/:postId', [PostsController, 'update']).use(middleware.auth())
-router.get('/posts', [PostsController, 'index']).use(middleware.auth())
 router
-  .get('/posts/:postId', [PostsController, 'show'])
-  .where('id', {
-    match: /^[0-9]+$/, // match only numbers
-    cast: (value) => Number(value), // cast the value to a number
+  .group(() => {
+    router.get('/', [PostsController, 'index'])
+    router.post('/', [PostsController, 'store'])
+    router.get('/:postId', [PostsController, 'show']).where('id', {
+      match: /^[0-9]+$/,
+      cast: (value) => Number(value),
+    })
+    router.put('/:postId', [PostsController, 'update'])
+    router.delete('/:postId', [PostsController, 'destroy'])
   })
+  .prefix('/posts')
   .use(middleware.auth())
-
-router.delete('/posts/:postId', [PostsController, 'destroy']).use(middleware.auth())
 
 /********************* COMMENTS ROUTES */
-// Get all comments for a post
-router.get('/posts/:postId/comments', [CommentsController, 'index']).use(middleware.auth())
-
-// Get a single comment for a post
 router
-  .get('/posts/:postId/comments/:commentId', [CommentsController, 'show'])
-  .use(middleware.auth())
+  .group(() => {
+    // Get all comments for a post
+    router.get('/', [CommentsController, 'index'])
 
-// Create a new comment for a post
-router.post('/posts/:postId/comments', [CommentsController, 'store']).use(middleware.auth())
+    // Get a single comment for a post
+    router.get('/:commentId', [CommentsController, 'show'])
 
-// Update a comment for a post
-router
-  .put('/posts/:postId/comments/:commentId', [CommentsController, 'update'])
-  .use(middleware.auth())
+    // Create a new comment for a post
+    router.post('/comments', [CommentsController, 'store'])
 
-// Delete a comment for a post
-router
-  .delete('/posts/:postId/comments/:commentId', [CommentsController, 'destroy'])
+    // Update a comment for a post
+    router.put('/:commentId', [CommentsController, 'update'])
+
+    // Delete a comment for a post
+    router.delete('/:commentId', [CommentsController, 'destroy'])
+  })
+  .prefix('/posts/:postId/comments')
   .use(middleware.auth())
