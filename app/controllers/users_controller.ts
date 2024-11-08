@@ -1,23 +1,12 @@
 import { HttpContext } from '@adonisjs/core/http'
+import User from '#models/User'
 
 export default class UsersController {
-  index() {
-    return [
-      {
-        id: 1,
-        username: 'virk',
-      },
-      {
-        id: 2,
-        username: 'romain',
-      },
-    ]
+  async index({ request, response }: HttpContext) {
+    return User.all()
   }
 
-  async show({ params }: HttpContext) {
-    return {
-      id: params.id,
-      username: 'virk',
-    }
+  async show({ request, params }: HttpContext) {
+    return User.findOrFail(params.id)
   }
 }
