@@ -36,10 +36,10 @@ router.delete('logout', [AuthController, 'logout']).as('auth.logout').use(middle
 router.get('me', [AuthController, 'me']).as('auth.me')
 
 /******************* USERS ROUTES */
-router.get('users', [UsersController, 'index']).use(middleware.auth()) // retrieve all users
+router.get('users', [UsersController, 'index']) // retrieve all users
 // router.get('users', '#controllers/users_controller.index')
 
-router.get('users/:id', [UsersController, 'show']).use(middleware.auth())
+router.get('users/:id', [UsersController, 'show'])
 
 /************************************** POSTS ROUTES */
 router
