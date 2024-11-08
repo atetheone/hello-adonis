@@ -6,8 +6,12 @@ export default class AuthController {
   public async register({ request, response }: HttpContext) {
     const userData = await request.validateUsing(registerValidator)
     const user = await User.create(userData)
-    // const returnUser = await User.accessTokens.create(user, ['*'], { expiresIn: '1 day' })
-    return response.status(201).send(user)
+
+    return response.status(201).send({
+      status: 'success',
+      message: 'user registered successfully',
+      data: user,
+    })
   }
 
   public async login({ request, response }: HttpContext) {
