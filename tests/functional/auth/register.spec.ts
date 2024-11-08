@@ -1,8 +1,14 @@
 import { test } from '@japa/runner'
 import { apiClient } from '@japa/api-client'
 import { registerValidator } from '#validators/auth'
+import User from '#models/User'
 
-test.group('Auth register', () => {
+test.group('Auth register', (group) => {
+  // Clean up db
+  group.each.setup(async () => {
+    await User.query().delete()
+  })
+
   test('example test', async ({ assert }) => {})
 
   test('should validate successful registration', async ({ assert }) => {
@@ -73,13 +79,16 @@ test.group('Auth register', () => {
   test('should register a valid user', async ({ client, assert }) => {
     const user = {
       full_name: 'Ate',
-      email: 'ate@ate.com',
+      email: 'ate2@ate.com',
       password: 'password123',
     }
 
     const response = await client.post('/register').json(user)
 
     response.assertStatus(201)
-    // assert.deepEqual(response.body, user)
+    response.assertBodyContains({
+      email: user.email,
+      fullName: user.full_name,
+    })
   })
 })
