@@ -4,9 +4,11 @@ import { loginValidator } from '#validators/auth'
 import User from '#models/User'
 
 test.group('Auth login', (group) => {
-  group.each(setup(async () => {
-    await User.query().delete()
-  }))
+  group.each(
+    setup(async () => {
+      await User.query().delete()
+    })
+  )
   test('should login with valid credentials', async ({ client, assert }) => {
     // TODO: Implement test
   })
