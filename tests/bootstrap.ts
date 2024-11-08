@@ -5,6 +5,7 @@ import type { Config } from '@japa/runner/types'
 import { pluginAdonisJS } from '@japa/plugin-adonisjs'
 import testUtils from '@adonisjs/core/services/test_utils'
 import { Database } from '@adonisjs/lucid/database'
+import db from '@adonisjs/lucid/services/db'
 
 /**
  * This file is imported by the "bin/test.ts" entrypoint file
@@ -24,8 +25,34 @@ export const plugins: Config['plugins'] = [assert(), apiClient(), pluginAdonisJS
  * The teardown functions are executed after all the tests
  */
 export const runnerHooks: Required<Pick<Config, 'setup' | 'teardown'>> = {
-  setup: [],
-  teardown: [],
+  setup: [
+    // async () => {
+    //   try {
+    //     await db.manager.connect()
+    //     await db.manager.beginGlobalTransaction()
+    //     // await Database.manager.connect()
+    //     // await Database.beginGlobalTransaction()
+    //     console.log('Test database connected successfully')
+    //   } catch (error) {
+    //     console.log('Failed to no connect to test data')
+    //     throw error
+    // }
+    // },
+  ],
+  teardown: [
+    // async () => {
+    //   try {
+    //     await db.manager.rollbackGlobalTransaction()
+    //     await db.mangager.disconnect()
+    //     // await Database.rollbackGlobalTransaction()
+    //     // await Database.manager.disconnect()
+    //     console.log('Test database disconnected successfully')
+    //   } catch (error) {
+    //     console.error('Failed to cleanup test database:', error)
+    //     throw error
+    //   }
+    // },
+  ],
 }
 
 /**
