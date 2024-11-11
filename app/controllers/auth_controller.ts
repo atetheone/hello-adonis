@@ -4,6 +4,7 @@ import { loginValidator, registerValidator } from '#validators/auth'
 import { MESSAGES } from '#config/messages'
 import { AuthService } from '#services/auth_service'
 import { ResponseService } from '#services/response_service'
+import type { LoginCredentials, LoginResponse, RegistrationUser } from '#types'
 
 @inject()
 export default class AuthController {
@@ -13,17 +14,25 @@ export default class AuthController {
   ) {}
 
   public async register({ request, response }: HttpContext) {
-    const userData = await request.validateUsing(registerValidator)
+    const userData: RegistrationUser = await request.validateUsing(registerValidator)
     const user = await this.authService.register(userData)
 
-    return this.responseService.success(response, MESSAGES.USER_REGISTERED, user, 201)
+    return this.responseService.success<RegistrationUser['data']>(
+      response,
+      MESSAGES.USER_REGISTERED,
+      user,
+      201
+    )
   }
 
   public async login({ request, response }: HttpContext) {
-    const { email, password } = await request.validateUsing(loginValidator)
-    const { user, token } = await this.authService.login(email, password)
+    const credentials: LoginCredentials = await request.validateUsing(loginValidator)
+    const { user, token } = await this.authService.login(credentials)
 
-    return this.responseService.success(response, MESSAGES.USER_LOGGED_IN, { user, token })
+    return this.responseService.success<LoginResponse['data']>(response, MESSAGES.USER_LOGGED_IN, {
+      user,
+      token,
+    })
   }
 
   public async logout({ auth, response }: HttpContext) {
