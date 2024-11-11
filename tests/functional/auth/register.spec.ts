@@ -87,8 +87,12 @@ test.group('Auth register', (group) => {
 
     response.assertStatus(201)
     response.assertBodyContains({
-      email: user.email,
-      fullName: user.full_name,
+      status: 'success',
+      message: 'user registered successfully',
+      data: {
+        email: user.email,
+        fullName: user.full_name,
+      },
     })
   })
 })
