@@ -1,5 +1,5 @@
 import type { HttpContext } from '@adonisjs/core/http'
-import type { ApiResponse } from '#types/response'
+import type { ApiResponse } from '#types'
 
 export class ResponseService {
   public success<T>(
