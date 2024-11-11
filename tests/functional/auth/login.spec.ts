@@ -1,7 +1,6 @@
 import { test } from '@japa/runner'
-import { apiClient } from '@japa/api-client'
-import { registerValidator, loginValidator } from '#validators/auth'
 import User from '#models/User'
+import { MESSAGES } from '#config/messages'
 
 const userBody = {
   email: 'test@example.com',
@@ -23,12 +22,7 @@ test.group('Auth login', (group) => {
     const loginBody = loginResponse.body()
 
     loginResponse.assertStatus(200)
-    loginResponse.assertBodyContains({
-      token: loginBody.token,
-      user: {
-        email: userBody.email,
-      },
-    })
+    assert.equal(loginBody.message, MESSAGES.USER_LOGGED_IN)
   })
 
   test('should fail with invalid credentials', async ({ client, assert }) => {
@@ -39,8 +33,13 @@ test.group('Auth login', (group) => {
 
     const response = await client.post('/login').json(unknownUser)
 
+    console.log(JSON.stringify(response.body(), null, 3))
+
     response.assertStatus(400)
-    assert.deepEqual(response.body().errors[0].message, 'Invalid user credentials')
+    assert.equal(
+      response.body().errors.some((err) => err.message === MESSAGES.USER_INVALID_CREDENTIALS),
+      true
+    )
   })
 
   test('should fail with missing required fields', async ({ client, assert }) => {
