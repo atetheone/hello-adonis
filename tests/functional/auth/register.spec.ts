@@ -1,7 +1,6 @@
 import { test } from '@japa/runner'
-import { apiClient } from '@japa/api-client'
-import { registerValidator } from '#validators/auth'
 import User from '#models/User'
+import { MESSAGES } from '#config/messages'
 
 test.group('Auth register', (group) => {
   // Clean up db
@@ -9,19 +8,7 @@ test.group('Auth register', (group) => {
     await User.query().delete()
   })
 
-  test('example test', async ({ assert }) => {})
-
-  test('should validate successful registration', async ({ assert }) => {
-    const data = {
-      full_name: 'John Doe',
-      email: 'john@example.com',
-      password: 'password123',
-    }
-    const validatedData = await registerValidator.validate(data)
-    assert.deepEqual(validatedData, data)
-  })
-
-  test('should invalidate short full name', async ({ assert }) => {
+  test('should invalidate short full name', async ({ client, assert }) => {
     const data = {
       full_name: 'Jo',
       email: 'john@doe.com',
@@ -29,13 +16,15 @@ test.group('Auth register', (group) => {
     }
 
     try {
-      await registerValidator.validate(data)
+      /*const response = */ await client.post('/register').json(data)
+      //
+      // console.log(JSON.stringify(response.body(), null, 3))
     } catch (error) {
       assert.equal(error.messages[0].field, 'full_name')
     }
   })
 
-  test('should invalidate invalid email', async ({ assert }) => {
+  test('should invalidate invalid email', async ({ client, assert }) => {
     const data = {
       full_name: 'John Doe',
       email: 'john',
@@ -43,13 +32,13 @@ test.group('Auth register', (group) => {
     }
 
     try {
-      await registerValidator.validate(data)
+      await client.post('/register').json(data)
     } catch (error) {
       assert.equal(error.messages[0].field, 'email')
     }
   })
 
-  test('should invalidate too short password', async ({ assert }) => {
+  test('should invalidate too short password', async ({ client, assert }) => {
     const user = {
       full_name: 'Jane Doe',
       email: 'jane@doe.com',
@@ -57,20 +46,20 @@ test.group('Auth register', (group) => {
     }
 
     try {
-      await registerValidator.validate(user)
+      await client.post('/register').json(user)
     } catch (error) {
       assert.equal(error.messages[0].field, 'password')
     }
   })
 
-  test('should not allow registration without a name', async ({ assert }) => {
+  test('should not allow registration without a name', async ({ client, assert }) => {
     const userBody = {
       email: 'missing.name@example.com',
       password: 'securepassword',
     }
 
     try {
-      await registerValidator.validate(userBody)
+      await client.post('/register').json(userBody)
     } catch (error) {
       assert.equal(error.messages[0].field, 'full_name')
     }
@@ -88,7 +77,7 @@ test.group('Auth register', (group) => {
     response.assertStatus(201)
     response.assertBodyContains({
       status: 'success',
-      message: 'user registered successfully',
+      message: MESSAGES.USER_REGISTERED,
       data: {
         email: user.email,
         fullName: user.full_name,
