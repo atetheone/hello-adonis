@@ -1,5 +1,6 @@
 import { test } from '@japa/runner'
 import User from '#models/user'
+import { MESSAGES } from '#config/messages'
 
 const userBody = {
   email: 'test@example.com',
@@ -7,7 +8,7 @@ const userBody = {
   full_name: 'Test User',
 }
 
-let token: string
+let token: string = ''
 
 test.group('Auth current user', (group) => {
   // Clean up database before each test
@@ -15,7 +16,7 @@ test.group('Auth current user', (group) => {
     await User.query().delete()
   })
 
-  test('should get authenticated user details', async ({ client, request }) => {
+  test('should get authenticated user details', async ({ client }) => {
     // Create user
     const user = await User.create(userBody)
 
@@ -26,7 +27,7 @@ test.group('Auth current user', (group) => {
     //   email: userBody.email,
     //   password: userBody.password,
     // })
-    token = tokenResponse.toJSON().token
+    token = tokenResponse.toJSON().token ?? ''
     // const token = loginResponse.body().token
 
     // Test /me endpoint
@@ -39,7 +40,7 @@ test.group('Auth current user', (group) => {
 
     response.assertStatus(200)
     response.assertBodyContains({
-      user: {
+      data: {
         email: userBody.email,
         fullName: userBody.full_name,
       },
@@ -54,7 +55,7 @@ test.group('Auth current user', (group) => {
 
     response.assertStatus(401)
     assert.equal(
-      response.body().errors.some((err) => err.message === 'Unauthorized access'),
+      response.body().errors.some((err) => err.message === MESSAGES.USER_UNAUTHORIZED),
       true
     )
   })
