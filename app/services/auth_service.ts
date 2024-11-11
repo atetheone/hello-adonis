@@ -1,13 +1,14 @@
 import User from '#models/user'
+import { LoginCredentials, RegitrationUser } from '#types'
 
 export class AuthService {
-  public async register(userData: any) {
+  public async register(userData: RegistrationUser) {
     const user = await User.create(userData)
     return user
   }
 
-  public async login(email: string, password: string) {
-    const user = await User.verifyCredentials(email, password)
+  public async login(credentials: LoginCredentials) {
+    const user = await User.verifyCredentials(credentials.email, credentials.password)
     const tokenResponse = await User.accessTokens.create(user, ['*'], { expiresIn: '1 day' })
     return { user, token: tokenResponse.toJSON() }
   }
