@@ -1,47 +1,40 @@
-import User from '#models/user'
-import { loginValidator, registerValidator } from '#validators/auth'
 import type { HttpContext } from '@adonisjs/core/http'
+import { inject } from '@adonisjs/core'
+import { loginValidator, registerValidator } from '#validators/auth'
+import { MESSAGES } from '#config/messages'
+import { AuthService } from '#services/auth_service'
+import { ResponseService } from '#services/response_service'
 
+@inject()
 export default class AuthController {
+  constructor(
+    protected authService: AuthService,
+    protected responseService: ResponseService
+  ) {}
+
   public async register({ request, response }: HttpContext) {
     const userData = await request.validateUsing(registerValidator)
-    const user = await User.create(userData)
+    const user = await this.authService.register(userData)
 
-    return response.status(201).send({
-      status: 'success',
-      message: 'user registered successfully',
-      data: user,
-    })
+    return this.responseService.success(response, MESSAGES.USER_REGISTERED, user, 201)
   }
 
   public async login({ request, response }: HttpContext) {
     const { email, password } = await request.validateUsing(loginValidator)
-    const user = await User.verifyCredentials(email, password)
-    const tokenResponse = await User.accessTokens.create(user, ['*'], { expiresIn: '1 day' })
-    const token = tokenResponse.toJSON()
+    const { user, token } = await this.authService.login(email, password)
 
-    return response.ok({
-      user,
-      token: token.token,
-      type: token!.type,
-      expiresIn: token.expiresAt,
-      lastUsedAt: token.lastUsedAt,
-    })
+    return this.responseService.success(response, MESSAGES.USER_LOGGED_IN, { user, token })
   }
 
-  public async logout({ auth }: HttpContext) {
+  public async logout({ auth, response }: HttpContext) {
     const user = auth.user!
-    await User.accessTokens.delete(user, user?.currentAccessToken.identifier)
+    await this.authService.logout(user)
 
-    return {
-      message: 'Logged out successfully',
-    }
+    return this.responseService.success(response, MESSAGES.USER_LOGGED_OUT)
   }
 
-  public async me({ auth }: HttpContext) {
+  public async me({ auth, response }: HttpContext) {
     await auth.check()
-    return {
-      user: auth.user,
-    }
+    return this.responseService.success(response, 'User details', auth.user)
   }
 }
