@@ -2,18 +2,22 @@ import type { HttpContext } from '@adonisjs/core/http'
 import type { ApiResponse } from '#types'
 
 export class ResponseService {
-  public success<T>(
-    response: HttpContext['response'],
-    message: string,
-    data?: T,
-    statusCode = 200
-  ) {
+  public created<T>(response: HttpContext['response'], message: string, data: T) {
     const apiResponse: ApiResponse<T> = {
       status: 'success',
       message,
       data,
     }
-    return response.status(statusCode).send(apiResponse)
+    return response.status(201).send(apiResponse)
+  }
+
+  public success<T>(response: HttpContext['response'], message: string, data?: T) {
+    const apiResponse: ApiResponse<T> = {
+      status: 'success',
+      message,
+      data,
+    }
+    return response.status(200).send(apiResponse)
   }
 
   public error(response: HttpContext['response'], message: string, statusCode = 400) {
