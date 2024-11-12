@@ -30,10 +30,12 @@ router.get('/about', () => {
 router.get('/hello/:name', [GreetingsController, 'sayHello'])
 
 /************************************** AUTH ROUTES */
-router.post('register', [AuthController, 'register']).as('auth.register')
-router.post('login', [AuthController, 'login']).as('auth.login')
-router.delete('logout', [AuthController, 'logout']).as('auth.logout').use(middleware.auth())
-router.get('me', [AuthController, 'me']).as('auth.me').use(middleware.auth())
+router.group(() => {
+  router.post('register', [AuthController, 'register']).as('auth.register')
+  router.post('login', [AuthController, 'login']).as('auth.login')
+  router.delete('logout', [AuthController, 'logout']).as('auth.logout').use(middleware.auth())
+  router.get('me', [AuthController, 'me']).as('auth.me').use(middleware.auth())
+})
 
 /******************* USERS ROUTES */
 router.get('users', [UsersController, 'index']) // retrieve all users
@@ -46,7 +48,7 @@ router
   .group(() => {
     router.get('/', [PostsController, 'index'])
     router.post('/', [PostsController, 'store'])
-    router.get('/:postId', [PostsController, 'show']).where('id', {
+    router.get('/:postId', [PostsController, 'show']).where('postId', {
       match: /^[0-9]+$/,
       cast: (value) => Number(value),
     })
