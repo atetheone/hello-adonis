@@ -10,7 +10,7 @@ test.group('Auth register', (group) => {
 
   test('should invalidate short full name', async ({ client, assert }) => {
     const data = {
-      full_name: 'Jo',
+      fullName: 'Jo',
       email: 'john@doe.com',
       password: 'password123',
     }
@@ -26,7 +26,7 @@ test.group('Auth register', (group) => {
 
   test('should invalidate invalid email', async ({ client, assert }) => {
     const data = {
-      full_name: 'John Doe',
+      fullName: 'John Doe',
       email: 'john',
       password: 'password123',
     }
@@ -40,7 +40,7 @@ test.group('Auth register', (group) => {
 
   test('should invalidate too short password', async ({ client, assert }) => {
     const user = {
-      full_name: 'Jane Doe',
+      fullName: 'Jane Doe',
       email: 'jane@doe.com',
       password: '12442',
     }
@@ -67,21 +67,34 @@ test.group('Auth register', (group) => {
 
   test('should register a valid user', async ({ client, assert }) => {
     const user = {
-      full_name: 'Ate',
-      email: 'ate2@ate.com',
+      fullName: 'Ate',
+      email: 'ate22@ate.com',
       password: 'password123',
     }
 
     const response = await client.post('/register').json(user)
 
+    console.log(JSON.stringify(response.body(), null, 3))
+
     response.assertStatus(201)
+    assert.equal(response.body().message, MESSAGES.USER_REGISTERED)
+  })
+
+  test('should not allow user registration with an existing email', async ({ client, assert }) => {
+    const user = {
+      fullName: 'Ate',
+      email: 'ate2@ate.com',
+      password: 'password123',
+    }
+
+    await client.post('/register').json(user)
+
+    const response = await client.post('/register').json(user)
+
+    response.assertStatus(409)
     response.assertBodyContains({
-      status: 'success',
-      message: MESSAGES.USER_REGISTERED,
-      data: {
-        email: user.email,
-        fullName: user.full_name,
-      },
+      status: 'error',
+      message: MESSAGES.USER_EMAIL_EXISTS,
     })
   })
 })
