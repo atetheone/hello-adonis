@@ -18,6 +18,7 @@ export const MESSAGES = {
   COMMENT_DELETED: 'Comment deleted successfully',
   COMMENT_NOT_FOUND: 'Comment not found',
   COMMENT_UNAUTHORIZED: 'Not authorized to perform this action',
+  SERVER_ERROR: 'Server error'
 } as const
 
 export type Messages = typeof MESSAGES
