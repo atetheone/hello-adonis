@@ -5,6 +5,7 @@ import { MESSAGES } from '#config/messages'
 import { AuthService } from '#services/auth_service'
 import { ResponseService } from '#services/response_service'
 import type { LoginCredentials, LoginResponse, RegistrationUser } from '#types'
+// import { ConflictException } from '#exceptions/conflict'
 
 @inject()
 export default class AuthController {
@@ -15,7 +16,12 @@ export default class AuthController {
 
   public async register({ request, response }: HttpContext) {
     const userData: RegistrationUser = await request.validateUsing(registerValidator)
+
+    // try {
     const user = await this.authService.register(userData)
+
+    if (user.status === 'error')
+      return this.responseService.error(response, MESSAGES.USER_EMAIL_EXISTS, 409)
 
     return this.responseService.success<RegistrationUser['data']>(
       response,
@@ -23,6 +29,13 @@ export default class AuthController {
       user,
       201
     )
+    // } catch (err) {
+    // console.log(err instanceof ConflictException)
+    // console.log(err instanceof Error)
+    // // console.log(err)
+    // return this.responseService.error(response, MESSAGES.USER_EMAIL_EXISTS, 409)
+    // return this.responseService.error(response, MESSAGES.SERVER_ERROR, 500)
+    // }
   }
 
   public async login({ request, response }: HttpContext) {
