@@ -20,14 +20,12 @@ export default class AuthController {
     // try {
     const user = await this.authService.register(userData)
 
-    if (user.status === 'error')
-      return this.responseService.error(response, MESSAGES.USER_EMAIL_EXISTS, 409)
+    if (!user) return this.responseService.error(response, MESSAGES.USER_EMAIL_EXISTS, 409)
 
-    return this.responseService.success<RegistrationUser['data']>(
+    return this.responseService.created<RegistrationUser['data']>(
       response,
       MESSAGES.USER_REGISTERED,
-      user,
-      201
+      user
     )
     // } catch (err) {
     // console.log(err instanceof ConflictException)
