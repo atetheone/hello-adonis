@@ -15,4 +15,12 @@ export class ResponseService {
     }
     return response.status(statusCode).send(apiResponse)
   }
+
+  public error(response: HttpContext['response'], message: string, statusCode = 400) {
+    const apiResponse: ApiResponse<null> = {
+      status: 'error',
+      message,
+    }
+    return response.status(statusCode).send(apiResponse)
+  }
 }
