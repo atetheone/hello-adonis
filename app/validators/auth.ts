@@ -4,7 +4,7 @@ const password = vine.string().trim().minLength(8)
 
 export const registerValidator = vine.compile(
   vine.object({
-    full_name: vine.string().trim().minLength(3),
+    fullName: vine.string().trim().minLength(3),
     email: vine.string().trim().email().normalizeEmail(),
     password,
   })
