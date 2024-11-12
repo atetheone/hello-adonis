@@ -1,20 +1,17 @@
 import User from '#models/user'
 import { LoginCredentials, RegitrationUser } from '#types'
 import { MESSAGES } from '#config/messages'
-import { ConflictException } from '#exceptions/conflict'
+// import { ConflictException } from '#exceptions/conflict'
 
 export class AuthService {
-  public async register(userData: RegistrationUser) {
+  public async register(userData: RegitrationUser) {
     // Check if email already exists in the db
     // try {
     const existingUser = await User.query().where('email', userData.email).first()
 
     if (existingUser) {
       // throw new ConflictException(MESSAGES.USER_EMAIL_EXISTS)
-      return {
-        status: 'error',
-        message: MESSAGES.USER_EMAIL_EXISTS,
-      }
+      return false
     }
     // } catch (err) {
     // console.log(JSON.stringify(err, null, 3))
