@@ -3,7 +3,7 @@ import { createPostValidator, updatePostValidator } from '#validators/post'
 import Post from '#models/post'
 import { inject } from '@adonisjs/core'
 import { ResponseService } from '#services/response_service'
-import { MESSAGES } from '#config/messages'
+import { MESSAGES } from '#types/messages'
 
 @inject()
 export default class PostsController {
@@ -40,12 +40,12 @@ export default class PostsController {
   async show({ response, params }: HttpContext) {
     const post = await Post.findOrFail(params.postId)
 
-    if (!post) {
-      return this.responseService.error(response, MESSAGES.POST_NOT_FOUND, 404)
-      //response.status(404).json({ message: 'Post not found' })
-    }
+    // if (!post) {
+    //   return this.responseService.error(response, MESSAGES.POST_NOT_FOUND, 404)
+    //   //response.status(404).json({ message: 'Post not found' })
+    // }
 
-    return this.responseService.success<Post>(response, MESSAGES.POST_SHOWED, post)
+    return this.responseService.success<Post>(response, MESSAGES.POST_FOUND, post)
     //.status(200).json(post)
   }
 
@@ -66,7 +66,7 @@ export default class PostsController {
 
     await post.save()
     // update the post
-    return post
+    return this.responseService.success<Post>(response, MESSAGES.POST_UPDATED, post)
   }
 
   /**
@@ -75,8 +75,7 @@ export default class PostsController {
   async destroy({ response, params }: HttpContext) {
     const post = await Post.findOrFail(params.postId)
     await post.delete()
-    return response.status(200).json({
-      message: 'Post deleted successfully',
-    })
+
+    return this.responseService.success(response, MESSAGES.POST_DELETED)
   }
 }
