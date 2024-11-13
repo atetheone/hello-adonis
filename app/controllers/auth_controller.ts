@@ -1,11 +1,10 @@
 import type { HttpContext } from '@adonisjs/core/http'
 import { inject } from '@adonisjs/core'
 import { loginValidator, registerValidator } from '#validators/auth'
-import { MESSAGES } from '#config/messages'
+import { MESSAGES } from '#types/messages'
 import { AuthService } from '#services/auth_service'
 import { ResponseService } from '#services/response_service'
 import type { LoginCredentials, LoginResponse, RegistrationUser } from '#types'
-// import { ConflictException } from '#exceptions/conflict'
 
 @inject()
 export default class AuthController {
@@ -27,13 +26,6 @@ export default class AuthController {
       MESSAGES.USER_REGISTERED,
       user
     )
-    // } catch (err) {
-    // console.log(err instanceof ConflictException)
-    // console.log(err instanceof Error)
-    // // console.log(err)
-    // return this.responseService.error(response, MESSAGES.USER_EMAIL_EXISTS, 409)
-    // return this.responseService.error(response, MESSAGES.SERVER_ERROR, 500)
-    // }
   }
 
   public async login({ request, response }: HttpContext) {
