@@ -1,3 +1,3 @@
-export * from './login_user'
-export * from './registration_user'
-export * from './response'
+export * from './login_user.js'
+export * from './registration_user.js'
+export * from './response.js'
