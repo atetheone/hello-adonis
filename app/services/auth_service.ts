@@ -1,7 +1,5 @@
 import User from '#models/user'
 import { LoginCredentials, RegitrationUser } from '#types'
-import { MESSAGES } from '#config/messages'
-// import { ConflictException } from '#exceptions/conflict'
 
 export class AuthService {
   public async register(userData: RegitrationUser) {
@@ -28,6 +26,6 @@ export class AuthService {
   }
 
   public async logout(user: User) {
-    await User.accessTokens.delete(user, user!.currentAccessToken.identifier)
+    await User.accessTokens.delete(user, user.currentAccessToken.identifier)
   }
 }
