@@ -1,7 +1,7 @@
 import { test } from '@japa/runner'
 import User from '#models/user'
 import Post from '#models/post'
-import { MESSAGES } from '#config/messages'
+import { MESSAGES } from '#types/messages'
 
 const userBody = {
   email: 'test@example.com',
@@ -44,9 +44,8 @@ test.group('Posts create', (group) => {
 
     // console.log(JSON.stringify(response.body().errors, null, 2))
     response.assertStatus(401)
-    assert.isTrue(
-      response.body().errors.some((error) => error.message === MESSAGES.USER_UNAUTHORIZED)
-    )
+
+    assert.isTrue(response.body().message === MESSAGES.USER_UNAUTHORIZED)
   })
 
   test('should fail with invalid title length', async ({ client }) => {

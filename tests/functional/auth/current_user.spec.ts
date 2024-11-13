@@ -1,6 +1,6 @@
 import { test } from '@japa/runner'
 import User from '#models/user'
-import { MESSAGES } from '#config/messages'
+import { MESSAGES } from '#types/messages'
 
 const userBody = {
   email: 'test@example.com',
@@ -54,9 +54,6 @@ test.group('Auth current user', (group) => {
     // const newToken = await request.bearerToken(token)
 
     response.assertStatus(401)
-    assert.equal(
-      response.body().errors.some((err) => err.message === MESSAGES.USER_UNAUTHORIZED),
-      true
-    )
+    assert.isTrue(response.body().message === MESSAGES.USER_UNAUTHORIZED)
   })
 })

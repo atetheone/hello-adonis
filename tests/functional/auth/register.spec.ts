@@ -1,6 +1,6 @@
 import { test } from '@japa/runner'
 import User from '#models/User'
-import { MESSAGES } from '#config/messages'
+import { MESSAGES } from '#types/messages'
 
 test.group('Auth register', (group) => {
   // Clean up db

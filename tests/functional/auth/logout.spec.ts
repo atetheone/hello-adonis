@@ -1,6 +1,6 @@
 import { test } from '@japa/runner'
 import User from '#models/user'
-import { MESSAGES } from '#config/messages'
+import { MESSAGES } from '#types/messages'
 
 const userBody = {
   email: 'test@example.com',
@@ -29,29 +29,17 @@ test.group('Auth logout', (group) => {
     })
   })
 
-  test('should fail for unauthenticated request', async ({ client }) => {
+  test('should fail for unauthenticated request', async ({ assert, client }) => {
     const response = await client.delete('/logout')
 
     response.assertStatus(401)
-    response.assertBodyContains({
-      errors: [
-        {
-          message: MESSAGES.USER_UNAUTHORIZED,
-        },
-      ],
-    })
+    assert.isTrue(response.body().message === MESSAGES.USER_UNAUTHORIZED)
   })
 
-  test('should fail with invalid token', async ({ client }) => {
+  test('should fail with invalid token', async ({ assert, client }) => {
     const response = await client.delete('/logout').bearerToken('invalid-token')
 
     response.assertStatus(401)
-    response.assertBodyContains({
-      errors: [
-        {
-          message: MESSAGES.USER_UNAUTHORIZED,
-        },
-      ],
-    })
+    assert.isTrue(response.body().message === MESSAGES.USER_UNAUTHORIZED)
   })
 })

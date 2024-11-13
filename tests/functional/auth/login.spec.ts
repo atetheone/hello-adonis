@@ -1,6 +1,6 @@
 import { test } from '@japa/runner'
 import User from '#models/User'
-import { MESSAGES } from '#config/messages'
+import { MESSAGES } from '#types/messages'
 
 const userBody = {
   email: 'test@example.com',
@@ -35,11 +35,8 @@ test.group('Auth login', (group) => {
 
     console.log(JSON.stringify(response.body(), null, 3))
 
-    response.assertStatus(400)
-    assert.equal(
-      response.body().errors.some((err) => err.message === MESSAGES.USER_INVALID_CREDENTIALS),
-      true
-    )
+    response.assertStatus(401)
+    assert.isTrue(response.body().message === MESSAGES.USER_INVALID_CREDENTIALS)
   })
 
   test('should fail with missing required fields', async ({ client, assert }) => {
