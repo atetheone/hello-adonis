@@ -10,6 +10,7 @@ export const MESSAGES = {
   POST_CREATED: 'Post created successfully',
   POST_UPDATED: 'Post updated successfully',
   POST_DELETED: 'Post deleted successfully',
+  POST_FOUND: 'Post found',
   POST_NOT_FOUND: 'Post not found',
   POST_UNAUTHORIZED: 'Not authorized to perform this action',
   // Comment messages
@@ -19,6 +20,7 @@ export const MESSAGES = {
   COMMENT_NOT_FOUND: 'Comment not found',
   COMMENT_UNAUTHORIZED: 'Not authorized to perform this action',
   SERVER_ERROR: 'Server error',
+  ROW_NOT_FOUND: 'Row not found',
 } as const
 
 export type Messages = typeof MESSAGES
